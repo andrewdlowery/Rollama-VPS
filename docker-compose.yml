@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  mysql-master:
+    image: mysql:8.0
+    container_name: mysql-master
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "${MYSQL_MASTER_PORT}:3306"
+    volumes:
+      - ./data/master:/var/lib/mysql
+      - ./mysql-master/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+      - ./backups:/backups
+    networks:
+      - mysql_network
+    command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  mysql-slave:
+    image: mysql:8.0
+    container_name: mysql-slave
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "${MYSQL_SLAVE_PORT}:3306"
+    volumes:
+      - ./data/slave:/var/lib/mysql
+      - ./mysql-slave/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+    networks:
+      - mysql_network
+    command: --default-authentication-plugin=mysql_native_password
+    depends_on:
+      - mysql-master
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: mysql-master
+      PMA_PORT: 3306
+      PMA_USER: ${MYSQL_ROOT_USER}
+      PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      PMA_ABSOLUTE_URI: http://localhost:${PHPMYADMIN_PORT}/
+    ports:
+      - "${PHPMYADMIN_PORT}:80"
+    volumes:
+      - ./phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php:ro
+    networks:
+      - mysql_network
+    depends_on:
+      - mysql-master
+    restart: unless-stopped
+
+networks:
+  mysql_network:
+    driver: bridge
