@@ -1,0 +1,4 @@
+.env
+mysql-master/data
+mysql-slave/data
+application/ssh
