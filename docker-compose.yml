@@ -60,33 +60,6 @@ services:
       - mysql-master
     restart: unless-stopped
 
-  application:
-    build:
-      context: ./application
-      dockerfile: Dockerfile
-      args:
-        APPLICATION_REPO: ${APPLICATION_REPO}
-        BACKEND_REPO: ${BACKEND_REPO}
-    container_name: application
-    environment:
-      APP_ENV: local
-      APP_DEBUG: true
-      DB_CONNECTION: mysql
-      DB_HOST: mysql-master
-      DB_PORT: 3306
-      DB_DATABASE: ${MYSQL_DATABASE}
-      DB_USERNAME: ${MYSQL_USER}
-      DB_PASSWORD: ${MYSQL_PASSWORD}
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./application:/var/www/html
-    networks:
-      - mysql_network
-    depends_on:
-      - mysql-master
-    command: /start.sh
-
 networks:
   mysql_network:
     driver: bridge
