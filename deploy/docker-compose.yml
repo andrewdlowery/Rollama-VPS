@@ -2,27 +2,27 @@ version: "3.8"
 
 services:
   # ============ GitHub Actions Runner ============
-  github-runner:
-    image: myoung34/github-runner:latest
-    container_name: github-runner
-    restart: unless-stopped
-    environment:
-      REPO_URL: $RUNNER_REPO_URL
-      REGISTRATION_TOKEN: $RUNNER_TOKEN
-      RUNNER_NAME: vps-runner-prod
-      RUNNER_WORKDIR: /tmp/runner-work
-      RUNNER_GROUP: default
-      LABELS: linux,prod,docker
-      RUNNER_SCOPE: repo
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./projects:/home/deploy/projects
-      - ./database:/home/deploy/database
-      - ./nginx:/home/deploy/nginx
-    networks:
-      - deploy_network
-    depends_on:
-      - nginx
+#  github-runner:
+#    image: myoung34/github-runner:latest
+#    container_name: github-runner
+#    restart: unless-stopped
+#    environment:
+#      REPO_URL: $RUNNER_REPO_URL
+#      REGISTRATION_TOKEN: $RUNNER_TOKEN
+#      RUNNER_NAME: vps-runner-prod
+#      RUNNER_WORKDIR: /tmp/runner-work
+#      RUNNER_GROUP: default
+#      LABELS: linux,prod,docker
+#      RUNNER_SCOPE: repo
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#      - ./projects:/home/deploy/projects
+#      - ./database:/home/deploy/database
+#      - ./nginx:/home/deploy/nginx
+#    networks:
+#      - deploy_network
+#    depends_on:
+#      - nginx
 
   # ============ PROD Environment ============
   prod_nginx:
