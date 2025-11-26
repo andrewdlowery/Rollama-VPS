@@ -52,6 +52,8 @@ services:
     environment:
       PMA_HOST: mysql-master
       PMA_PORT: 3306
+    volumes:
+      - ./phpmyadmin/config.inc.php:/etc/phpmyadmin/config.inc.php:ro
     ports:
       - "${PHPMYADMIN_PORT}:80"
     networks:
