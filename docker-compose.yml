@@ -59,6 +59,17 @@ services:
     depends_on:
       - mysql-master
     restart: unless-stopped
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    networks:
+      - mysql_network
+    depends_on:
+      - phpmyadmin
 
 networks:
   mysql_network:
