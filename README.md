@@ -9,3 +9,4 @@
    6. docker cp db.sql.gz mysql-master:/db.sql.gz
    7. docker exec -it mysql-master /bin/bash
    8. gunzip < db.sql.gz | mariadb -u root -p mydb
+9. БД (если нужно перезапустить) docker-compose -f docker-compose.db.yml up -d
