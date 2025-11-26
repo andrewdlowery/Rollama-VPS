@@ -1,7 +1,7 @@
 <?php
 /* Custom config for phpMyAdmin behind a reverse proxy */
 
-$cfg['PmaAbsoluteUri'] = 'http://db.rollama.com/';
+$cfg['PmaAbsoluteUri'] = 'https://db.rollama.com/';
 $cfg['ForceSSL'] = false;
 
 /* Optional: Increase login cookie validity */
