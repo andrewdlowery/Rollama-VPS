@@ -1,46 +1,51 @@
 #!/bin/bash
 
-# Загружаем переменные из .env
+# Load variables from .env
 if [ -f ../.env ]; then
-    export $(cat ../.env | grep -v '#' | xargs)
+    set -a
+    source ../.env
+    set +a
 else
-    echo "Ошибка: файл .env не найден!"
+    echo "Error: .env file not found!"
     exit 1
 fi
 
-# Параметры бэкапа
-BACKUP_DIR="/backups"
+# Backup parameters
+BACKUP_DIR="./backups"
 DATE=$(date +"%Y%m%d_%H%M%S")
-BACKUP_FILE="$BACKUP_DIR/backup_$DATE.sql"
+BACKUP_FILE="$BACKUP_DIR/backup_$DATE.sql.gz"
 LOG_FILE="$BACKUP_DIR/backup.log"
 
-# MySQL параметры
+# MySQL parameters
 MYSQL_HOST="mysql-master"
 MYSQL_PORT="3306"
 
-# Количество дней, после которых удалять старые бэкапы
+# Number of days after which old backups will be deleted
 RETENTION_DAYS=${BACKUP_RETENTION_DAYS:-7}
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') - Начало бэкапа" >> $LOG_FILE
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Backup start"
 
-# Создаём бэкап
-mysqldump -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_ROOT_USER -p$MYSQL_ROOT_PASSWORD \
-  --single-transaction \
-  --quick \
-  --lock-tables=false \
-  --events \
-  --routines \
-  --triggers \
-  $MYSQL_DATABASE > $BACKUP_FILE
+# Spinner function
+spinner() {
+    local pid=$1
+    local delay=0.1
+    local spinstr='|/-\'
+    while [ "$(ps a | awk '{print $1}' | grep $pid)" ]; do
+        local temp=${spinstr#?}
+        printf " [%c]  " "$spinstr"
+        local spinstr=$temp${spinstr%"$temp"}
+        sleep $delay
+        printf "\b\b\b\b\b\b"
+    done
+    printf "      \b\b\b\b\b\b"
+}
 
-if [ $? -eq 0 ]; then
-    # Архивируем
-    gzip $BACKUP_FILE
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - Бэкап успешно создан: ${BACKUP_FILE}.gz ($(du -h ${BACKUP_FILE}.gz | cut -f1))" >> $LOG_FILE
+# Run backup in background
+docker exec "$MYSQL_HOST" sh -c "mariadb-dump -u $MYSQL_ROOT_USER -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE" | gzip > "$BACKUP_FILE" &
+BACKUP_PID=$!
 
-    # Удаляем старые бэкапы
-    find $BACKUP_DIR -name "backup_*.sql.gz" -mtime +$RETENTION_DAYS -delete
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - Старые бэкапы удалены" >> $LOG_FILE
-else
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - ОШИБКА при создании бэкапа!" >> $LOG_FILE
-fi
+# Show spinner while backup is running
+spinner $BACKUP_PID
+
+wait $BACKUP_PID
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Backup done: $BACKUP_FILE"

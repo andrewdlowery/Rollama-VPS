@@ -1,5 +1,7 @@
 .idea
 .env
+backups/backup.log
+backups/backups
 mysql-master/data
 mysql-slave/data
 application/ssh
