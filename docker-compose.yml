@@ -68,15 +68,15 @@ services:
     networks:
       - mysql_network
 
-  staging_php:
-    container_name: staging_php
-    build: ./application/projects/staging/app/docker/php/
-    volumes:
-      - ./application/projects/staging/app/:/var/www/html:delegated
-      - ./application/projects/staging/api:/var/www/html/backend:delegated
-    restart: always
-    networks:
-      - mysql_network
+#  staging_php:
+#    container_name: staging_php
+#    build: ./application/projects/staging/app/docker/php/
+#    volumes:
+#      - ./application/projects/staging/app/:/var/www/html:delegated
+#      - ./application/projects/staging/api:/var/www/html/backend:delegated
+#    restart: always
+#    networks:
+#      - mysql_network
 
   nginx:
     image: nginx:latest
@@ -93,7 +93,7 @@ services:
       - mysql_network
     depends_on:
       - prod_php
-      - staging_php
+#      - staging_php
       - phpmyadmin
 
 networks:
