@@ -17,3 +17,4 @@
        12. staging
            13. in staging create app and api folders
            14. clone application and backend repos
+15. Create 

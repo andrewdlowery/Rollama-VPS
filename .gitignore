@@ -4,4 +4,5 @@ backups/backup.log
 backups/backups
 mysql-master/data
 mysql-slave/data
-application/projects
+application/projects/prod/app
+application/projects/prod/api/backend
