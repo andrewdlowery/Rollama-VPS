@@ -18,23 +18,7 @@ This guide covers the installation, database migration, and environment setup fo
    snap install docker
    apt install docker-compose
    ```
-
-## 3. Database Migration
-
-1. **Copy Backup:**
-   Transfer the SQL backup to the MySQL container.
-   ```bash
-   docker cp db.sql.gz mysql-master:/db.sql.gz
-   ```
-
-2. **Import Data:**
-   Access the container and restore the database.
-   ```bash
-   docker exec -it mysql-master /bin/bash
-   gunzip < db.sql.gz | mariadb -u root -p mydb
-   ```
-
-## 4. Directory Structure & Repositories
+## 3. Directory Structure & Repositories
 
 Create the project folder structure for **Production** and **Staging**:
 
@@ -48,13 +32,13 @@ Create the project folder structure for **Production** and **Staging**:
 
 ### Cloning Sources
 1. Clone the **Application** repository into:
-    * `prod/app`
-    * `staging/app`
+   * `prod/app`
+   * `staging/app`
 2. Clone the **Laravel Backend** repository into:
-    * `prod/api/backend/`
-    * `staging/api/backend/`
+   * `prod/api/backend/`
+   * `staging/api/backend/`
 
-## 5. Backend Configuration
+## 4. Backend Configuration
 
 Perform these steps inside both `prod/api/backend/` and `staging/api/backend/` folders:
 
@@ -72,7 +56,7 @@ Perform these steps inside both `prod/api/backend/` and `staging/api/backend/` f
 3. **Environment Config:**
    Create a `.env` file and populate it with the necessary environment variables.
 
-## 6. Frontend Application Configuration
+## 5. Frontend Application Configuration
 
 In the `prod/app` directory, create the following files:
 1. `conn.php`
@@ -95,3 +79,32 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 ```
+
+## 6. Run Docker Containers
+   ```bash
+   docker-compose up --build -d
+   ```
+
+## 7. Database Migration
+
+1. **Copy Backup:**
+   Transfer the SQL backup to the MySQL container.
+   ```bash
+   docker cp db.sql.gz mysql-master:/db.sql.gz
+   ```
+
+2. **Import Data:**
+   Access the container and restore the database.
+   ```bash
+   docker exec -it mysql-master /bin/bash
+   gunzip < db.sql.gz | mariadb -u root -p mydb
+   ```
+
+## 8. Backup setup
+   ```bash
+   cronteb -e
+   ```
+   Add the following line:
+   ```bash
+   0 2 * * * cd /root/rollama/vps/backups && ./backup.sh > /dev/null 2>&1
+   ```
