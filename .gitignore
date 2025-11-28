@@ -6,3 +6,5 @@ mysql-master/data
 mysql-slave/data
 application/projects/prod/app
 application/projects/prod/api/backend
+application/projects/staging/app
+application/projects/staging/api/backend
