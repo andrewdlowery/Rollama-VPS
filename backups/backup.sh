@@ -23,6 +23,15 @@ MYSQL_PORT="3306"
 # Number of days after which old backups will be deleted
 RETENTION_DAYS=${BACKUP_RETENTION_DAYS:-7}
 
+# Create backup directory if not exists
+mkdir -p "$BACKUP_DIR"
+
+# Remove old backups
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Removing backups older than ${RETENTION_DAYS} days..."
+find "$BACKUP_DIR" -name "backup_*.sql.gz" -type f -mtime +$RETENTION_DAYS -exec rm -f {} \;
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Old backups removed."
+
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Backup start"
 
 # Spinner function
