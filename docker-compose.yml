@@ -87,8 +87,6 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
       - ./application/projects/prod/app/:/var/www/html:delegated
       - ./application/projects/prod/api:/var/www/html/backend:delegated
-      - ./application/projects/staging/app/:/var/www/html:delegated
-      - ./application/projects/staging/api:/var/www/html/backend:delegated
     networks:
       - mysql_network
     depends_on:
