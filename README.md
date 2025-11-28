@@ -60,7 +60,7 @@ Perform these steps inside both `prod/api/backend/` and `staging/api/backend/` f
 
 1. **Install Dependencies:**
    ```bash
-   composer install
+   composer install --ignore-platform-reqs
    ```
 
 2. **Set Permissions:**
