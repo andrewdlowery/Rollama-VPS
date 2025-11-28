@@ -100,11 +100,23 @@ if ($conn->connect_error) {
    gunzip < db.sql.gz | mariadb -u root -p mydb
    ```
 
-## 8. Backup setup
+## 8. Configure Laravel cron
    ```bash
    cronteb -e
    ```
    Add the following line:
+   ```bash
+   # Prod
+  * * * * * docker exec prod_php php /var/www/html/backend/backend/artisan schedule:run >> /dev/null 2>&1
+  # Staging
+  * * * * * docker exec staging_php php /var/www/staging/backend/backend/artisan schedule:run >> /dev/null 2>&1
+   ```
+
+## 9. Backup setup
+   ```bash
+   cronteb -e
+   ```
+Add the following line:
    ```bash
    0 2 * * * cd /root/rollama/vps/backups && ./backup.sh > /dev/null 2>&1
    ```
