@@ -52,24 +52,49 @@ services:
     environment:
       PMA_HOST: mysql-master
       PMA_PORT: 3306
-    ports:
-      - "${PHPMYADMIN_PORT}:80"
     networks:
       - mysql_network
     depends_on:
       - mysql-master
     restart: unless-stopped
-#  nginx:
- #   image: nginx:latest
-  #  container_name: nginx
-   # ports:
-    #  - "80:80"
-   # volumes:
-    #  - ./nginx/conf.d:/etc/nginx/conf.d:ro
-   # networks:
-    #  - mysql_network
-   # depends_on:
-    #  - phpmyadmin
+
+  prod_php:
+    container_name: prod_php
+    build: ./application/projects/prod/app/docker/php/
+    volumes:
+      - ./application/projects/prod/app/:/var/www/html:delegated
+      - ./application/projects/prod/api:/var/www/html/backend:delegated
+    restart: always
+    networks:
+      - mysql_network
+
+  staging_php:
+    container_name: staging_php
+    build: ./application/projects/staging/app/docker/php/
+    volumes:
+      - ./application/projects/staging/app/:/var/www/html:delegated
+      - ./application/projects/staging/api:/var/www/html/backend:delegated
+    restart: always
+    networks:
+      - mysql_network
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./application/projects/prod/app/:/var/www/html:delegated
+      - ./application/projects/prod/api:/var/www/html/backend:delegated
+      - ./application/projects/staging/app/:/var/www/html:delegated
+      - ./application/projects/staging/api:/var/www/html/backend:delegated
+    networks:
+      - mysql_network
+    depends_on:
+      - prod_php
+      - staging_php
+      - phpmyadmin
 
 networks:
   mysql_network:

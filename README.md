@@ -9,4 +9,11 @@
    6. docker cp db.sql.gz mysql-master:/db.sql.gz
    7. docker exec -it mysql-master /bin/bash
    8. gunzip < db.sql.gz | mariadb -u root -p mydb
-9. БД (если нужно перезапустить) docker-compose -f docker-compose.db.yml up -d
+9. create projects folder in application directory
+   10. in projects folder create 2 folders
+       11. prod
+           12. in prod create app and api folders
+           13. clone application and backend repos
+       12. staging
+           13. in staging create app and api folders
+           14. clone application and backend repos
